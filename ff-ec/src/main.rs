@@ -4,6 +4,7 @@ use ark_secp256k1::{Affine, Fq, Fr, Projective};
 use ark_std::{ops::Mul, One, UniformRand, Zero};
 use rand::SeedableRng;
 use rand_chacha::ChaChaRng;
+use std::collections::HashSet;
 
 fn main() {
     // We initialize a random number generator to sample random field and group elements
@@ -52,15 +53,21 @@ fn main() {
     // put them in vector `gen`
     let mut gen_list: Vec<i32> = Vec::new();
     for i in 2..89 {
-        // write your test here to check whether i is a generator of F_89
+        // 1 ne peut pas être un générateur donc on commence à 2
+        let g = F::from(i);
+        let f = |x: i32| g.pow(BigInt::<1>::from(x as u32)); 
+        let all_generated: HashSet<_> = (1..89).map(f).collect();
+        if all_generated.len() == 88 {
+            gen_list.push(i)
+        }
     }
     println!(
-        "There are {} generators of F_89 and they are {:?}\n",
+        "😀There are {} generators of F_89 and they are {:?}\n",
         gen_list.len(),
         gen_list
     );
     // uncomment the following line to check your solution (it shouldn't panic for the correct solution)
-    // assert_eq!(gen_list.iter().sum::<i32>(), 1780);
+    assert_eq!(gen_list.iter().sum::<i32>(), 1780);
 
     // The crate ark-secp256k1 implements the secp256k1 elliptic curve used in Bitcoin
     // We bring four types from this crate into scope: `Fq`, `Fr`, `Affine` and `Projective`
@@ -124,5 +131,5 @@ fn main() {
     // assert_eq!(x, gen.mul(Fr::from(2)).into_affine().x);
     // assert_eq!(y, gen.mul(Fr::from(2)).into_affine().y);
 
-    println!("Good job!");
+    println!("Good job! 🏴‍☠️");
 }
